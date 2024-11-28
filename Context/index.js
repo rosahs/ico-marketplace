@@ -3,6 +3,7 @@ import {
   Component,
   createContext,
   useContext,
+  useEffect,
   useState,
 } from "react";
 
@@ -60,6 +61,8 @@ export const StateContextProvider = ({ children }) => {
       if (!window.ethereum)
         return notifyError("No account found");
 
+      await handleNetworkSwitch();
+
       // Request the list of accounts connected to the DApp from the user's wallet
       // 'eth_accounts' is a JSON-RPC method provided by Ethereum wallets like MetaMask
       // It returns an array of accounts that are currently authorized to interact with the DApp
@@ -73,7 +76,7 @@ export const StateContextProvider = ({ children }) => {
         setAddress(accounts[0]); // Set the first account as the active address
 
         const provider = new ethers.providers.Web3Provider(
-          connection
+          window.ethereum
         ); // Get the Web3 provider
 
         const getBalance = await provider.getBalance(
@@ -92,10 +95,16 @@ export const StateContextProvider = ({ children }) => {
     }
   };
 
+  useEffect(() => {
+    checkIfWalletConnected();
+  }, [address]);
+
   const connectWallet = async () => {
     try {
       if (!window.ethereum)
         return notifyError("No account found");
+
+      await handleNetworkSwitch();
 
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
@@ -103,11 +112,9 @@ export const StateContextProvider = ({ children }) => {
 
       if (accounts.length) {
         setAddress(accounts[0]); // Set the first account as the active address
-        const web3Modal = new Web3Modal();
-        const connection = await web3Modal.connect();
 
         const provider = new ethers.providers.Web3Provider(
-          connection
+          window.ethereum
         );
 
         const getBalance = await provider.getBalance(
@@ -380,6 +387,9 @@ export const StateContextProvider = ({ children }) => {
       setLoader(true);
       notifySuccess("Purchasing token...");
 
+      if (!tokenAddress || !tokenQuantity)
+        return notifyError("Data is missing");
+
       const address = await connectWallet();
       const contract = await ICO_MARKETPLACE_contract();
 
@@ -546,7 +556,38 @@ export const StateContextProvider = ({ children }) => {
   };
 
   return (
-    <StateContext.Provider value={{}}>
+    <StateContext.Provider
+      value={{
+        withdrawToken,
+        transferTokens,
+        buyToken,
+        createICOSALE,
+        GET_ALL_ICOSALE_TOKEN,
+        GET_ALL_USER_ICOSALE_TOKEN,
+        createERC20,
+        connectWallet,
+        openBuyToken,
+        setOpenBuyToken,
+        openWithdrawToken,
+        setOpenWithdrawToken,
+        openTransferToken,
+        setOpenTransferToken,
+        openTokenCreator,
+        setOpenTokenCreator,
+        openCreateICO,
+        setOpenCreateICO,
+        address,
+        setAddress,
+        accountBalance,
+        loader,
+        setLoader,
+        currency,
+        ICO_MARKETPLACE_ADDRESS,
+        PINATA_API_KEY,
+        PINATA_SECRET_KEY,
+        shortenAddress,
+      }}
+    >
       {children}
     </StateContext.Provider>
   );
