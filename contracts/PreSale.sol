@@ -150,14 +150,13 @@ contract ICOMarketplace {
   }
 
   function getAllTokens() external view returns(TokenDetails[] memory) {
-    uint256 length = 0;
-
-    TokenDetails[] memory tokens = new TokenDetails[](length);
+    uint256 length = allSupportedTokens.length;  // Get the number of supported tokens
+    TokenDetails[] memory tokens = new TokenDetails[](length);  // Create an array of the correct size
     
-    for( uint256 i= 0; i< 0; i++) {
-      tokens[i] = tokenDetails[allSupportedTokens[i]];
+    for(uint256 i = 0; i < length; i++) {  // Iterate through all supported tokens
+        tokens[i] = tokenDetails[allSupportedTokens[i]];  // Add each token's details to the array
     }
-
-    return tokens;
+    
+    return tokens;  // Return the array of all token details
   }
 }
