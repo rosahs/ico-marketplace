@@ -59,18 +59,32 @@ const network = {
 const changeNetwork = async ({ networkName }) => {
   try {
     if (!window.ethereum)
-      throw new Error("No crypto wallet found"); // Check if MetaMask is available
+      throw new Error("No crypto wallet found");
 
+    const chainId = network[networkName].chainId;
+    // First try to switch to the network
     await window.ethereum.request({
-      method: "wallet_addEthereumChain",
-      params: [
-        {
-          ...network[networkName], // Add network parameters based on `networkName`
-        },
-      ],
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId }],
     });
-  } catch (err) {
-    console.log(err); // Log any errors
+  } catch (switchError) {
+    // If the network is not added, add it
+    if (switchError.code === 4902) {
+      try {
+        await window.ethereum.request({
+          method: "wallet_addEthereumChain",
+          params: [
+            {
+              ...network[networkName],
+            },
+          ],
+        });
+      } catch (addError) {
+        console.error(addError);
+      }
+    } else {
+      console.error(switchError);
+    }
   }
 };
 
