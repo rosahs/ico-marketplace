@@ -28,14 +28,14 @@ const UploadLogo = ({
           url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
           data: formData,
           maxBodyLength: "Infinity",
-          header: {
+          headers: {
             pinata_api_key: PINATA_API_KEY,
             pinata_secret_api_key: PINATA_SECRET_KEY,
             "Content-Type": "multipart/form-data",
           },
         });
 
-        const url = `https://gateway.pinata.cloud/ipfs${response.data.IpfsHash}`;
+        const url = `https://gateway.pinata.cloud/ipfs/${response.data.IpfsHash}`;
 
         setImageURL(url);
         setLoader(false);
@@ -48,8 +48,8 @@ const UploadLogo = ({
     }
   };
 
-  const onDrop = useCallback(async (acceptFile) => {
-    await uploadToIPFS(acceptFile[0]);
+  const onDrop = useCallback(async (acceptedFile) => {
+    await uploadToIPFS(acceptedFile[0]);
   });
 
   const { getInputProps, getRootProps } = useDropzone({
@@ -69,7 +69,7 @@ const UploadLogo = ({
           />
         </div>
       ) : (
-        <div {...getRootProps}>
+        <div {...getRootProps()}>
           <label
             htmlFor="file"
             className="custum-file-upload"
@@ -83,7 +83,7 @@ const UploadLogo = ({
             <input
               type="file"
               id="file"
-              {...getInputProps}
+              {...getInputProps()}
             />
           </label>
         </div>

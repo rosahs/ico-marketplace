@@ -66,7 +66,12 @@ const TokenCreator = ({
           style={{ marginTop: "1rem" }}
         >
           {address ? (
-            <Button name="Create Token" />
+            <Button
+              name="Create Token"
+              handleClick={() =>
+                createERC20(token, address, imageURL)
+              }
+            />
           ) : (
             <Button
               name="Connect Wallet"
