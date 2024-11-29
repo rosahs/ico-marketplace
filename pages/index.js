@@ -1,7 +1,86 @@
-import React from "react";
+import React, { useState } from "react";
+
+import { useStateContext } from "../Context/index";
+import Header from "../Components/Header";
+import Input from "../Components/Input";
+import Button from "../Components/Button";
+import Table from "../Components/Table";
+import PreSaleList from "../Components/PreSaleList";
+import UploadLogo from "../Components/UploadLogo";
+import Loader from "../Components/Loader";
+import Footer from "../Components/Footer";
+import ICOMarket from "../Components/ICOMarket";
+import TokenCreator from "../Components/TokenCreator";
+import TokenHistory from "../Components/TokenHistory";
+import Marketplace from "../Components/Marketplace";
+import CreateICO from "../Components/CreateICO";
+import Card from "../Components/Card";
+import BuyToken from "../Components/BuyToken";
+import WithdrawToken from "../Components/WithdrawToken";
+import TokenTransfer from "../Components/TokenTransfer";
 
 const index = () => {
-  return <div>index</div>;
+  const {
+    withdrawToken,
+    transferTokens,
+    buyToken,
+    createICOSALE,
+    GET_ALL_ICOSALE_TOKEN,
+    GET_ALL_USER_ICOSALE_TOKEN,
+    createERC20,
+    connectWallet,
+    openBuyToken,
+    setOpenBuyToken,
+    openWithdrawToken,
+    setOpenWithdrawToken,
+    openTransferToken,
+    setOpenTransferToken,
+    openTokenCreator,
+    setOpenTokenCreator,
+    openCreateICO,
+    setOpenCreateICO,
+    address,
+    setAddress,
+    accountBalance,
+    loader,
+    setLoader,
+    currency,
+    ICO_MARKETPLACE_ADDRESS,
+    PINATA_API_KEY,
+    PINATA_SECRET_KEY,
+    shortenAddress,
+  } = useStateContext();
+
+  const notifySuccess = (msg) =>
+    toast.success(msg, { duration: 200 });
+  const notifyError = (msg) =>
+    toast.error(msg, { duration: 200 });
+
+  const [allICOs, setAllICOs] = useState();
+  const [allUserICOs, setAllUserICOs] = useState();
+
+  //component open
+  const [OpenAllICOs, setOpenAllICOs] = useState();
+  const [openTokenHistory, setOpenTokenHistory] =
+    useState();
+  const [openICOMarketPlace, setOpenICOMarketPlace] =
+    useState();
+
+  // buy ico token
+  const [buyICO, setBuyICO] = useState();
+
+  const copyAddress = () => {
+    navigator.clipboard.writeText(ICO_MARKETPLACE_ADDRESS);
+    notifySuccess("copied succefully");
+  };
+
+  return (
+    <div>
+      <Header />
+      <Footer />
+      <Loader />
+    </div>
+  );
 };
 
 export default index;
