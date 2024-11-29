@@ -76,9 +76,39 @@ const index = () => {
 
   return (
     <div>
-      <Header />
+      <Header
+        accountBalance={accountBalance}
+        setAddress={setAddress}
+        address={address}
+        connectWallet={connectWallet}
+        ICO_MARKETPLACE_ADDRESS={ICO_MARKETPLACE_ADDRESS}
+        shortenAddress={shortenAddress}
+        setOpenAllICOs={setOpenAllICOs}
+        OpenAllICOs={OpenAllICOs}
+        setOpenTokenCreator={setOpenTokenCreator}
+        openTokenCreator={openTokenCreator}
+        setOpenTokenHistory={setOpenTokenHistory}
+        openTokenHistory={openTokenHistory}
+        setOpenICOMarketPlace={setOpenICOMarketPlace}
+        openICOMarketPlace={openICOMarketPlace}
+      />
+
+      {OpenAllICOs && <ICOMarket />}
+
+      {openTokenCreator && <TokenCreator />}
+
+      {openTokenHistory && <TokenHistory />}
+
+      {openCreateICO && <CreateICO />}
+
+      {openICOMarketPlace && <ICOMarket />}
+      {openBuyToken && <BuyToken />}
+      {openTransferToken && <TokenTransfer />}
+      {openWithdrawToken && <WithdrawToken />}
+
       <Footer />
-      <Loader />
+
+      {loader && <Loader />}
     </div>
   );
 };
