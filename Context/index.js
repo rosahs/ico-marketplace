@@ -50,9 +50,9 @@ export const StateContextProvider = ({ children }) => {
   const [openCreateICO, setOpenCreateICO] = useState(false);
 
   const notifySuccess = (msg) =>
-    toast.success(msg, { duration: 200 });
+    toast.success(msg, { duration: 2000 });
   const notifyError = (msg) =>
-    toast.error(msg, { duration: 200 });
+    toast.error(msg, { duration: 2000 });
 
   // Function to check if a wallet is connected to the DApp
   const checkIfWalletConnected = async () => {

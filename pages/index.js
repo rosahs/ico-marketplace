@@ -108,7 +108,12 @@ const index = () => {
         />
       )}
 
-      {openTokenHistory && <TokenHistory />}
+      {openTokenHistory && (
+        <TokenHistory
+          shortenAddress={shortenAddress}
+          setOpenTokenHistory={setOpenTokenHistory}
+        />
+      )}
 
       {openCreateICO && <CreateICO />}
 

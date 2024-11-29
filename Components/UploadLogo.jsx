@@ -4,53 +4,13 @@ import { useDropzone } from "react-dropzone";
 import toast from "react-hot-toast";
 import UploadICON from "./SVG/UploadICON";
 
-const UploadLogo = ({
-  imageURL,
-  setImageURL,
-  setLoader,
-  PINATA_API_KEY,
-  PINATA_SECRET_KEY,
-}) => {
-  const notifySuccess = (msg) =>
-    toast.success(msg, { duration: 200 });
-  const notifyError = (msg) =>
-    toast.error(msg, { duration: 200 });
-
-  const uploadToIPFS = async (file) => {
-    if (file) {
-      try {
-        setLoader(true);
-        const formData = new FormData();
-        formData.append("file", file);
-
-        const response = await axios({
-          method: "POST",
-          url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
-          data: formData,
-          maxBodyLength: "Infinity",
-          headers: {
-            pinata_api_key: PINATA_API_KEY,
-            pinata_secret_api_key: PINATA_SECRET_KEY,
-            "Content-Type": "multipart/form-data",
-          },
-        });
-
-        const url = `https://gateway.pinata.cloud/ipfs/${response.data.IpfsHash}`;
-
-        setImageURL(url);
-        setLoader(false);
-        notifySuccess("Logo uploaded successfully");
-      } catch (error) {
-        setLoader(false);
-        notifyError("Check your pinata keys");
-        console.log(error);
-      }
-    }
-  };
-
-  const onDrop = useCallback(async (acceptedFile) => {
-    await uploadToIPFS(acceptedFile[0]);
-  });
+const UploadLogo = ({ imageFile, setImageFile }) => {
+  const onDrop = useCallback(
+    async (acceptedFile) => {
+      setImageFile(acceptedFile[0]);
+    },
+    [setImageFile]
+  );
 
   const { getInputProps, getRootProps } = useDropzone({
     onDrop,
@@ -59,13 +19,12 @@ const UploadLogo = ({
 
   return (
     <>
-      {imageURL ? (
+      {imageFile ? (
         <div>
-          {" "}
           <img
-            src={imageURL}
+            src={URL.createObjectURL(imageFile)}
             style={{ width: "200px", height: "auto" }}
-            alt=""
+            alt="Preview"
           />
         </div>
       ) : (
