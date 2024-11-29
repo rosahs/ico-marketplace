@@ -134,6 +134,46 @@ export const StateContextProvider = ({ children }) => {
 
   // main functions
 
+  const createERC20 = async (token, account, imageURL) => {
+    const { name, symbol, supply } = token;
+
+    try {
+      setLoader(true);
+      notifySuccess("creating token...");
+
+      // Validate input
+      if (!name || !symbol || !supply) {
+        console.error("Missing Token Details");
+        notifyError("Data Missing");
+        setLoader(false);
+        return;
+      }
+
+      const web3Modal = new Web3Modal();
+      const connection = await web3Modal.connect();
+
+      const provider = new ethers.providers.Web3Provider(
+        connection
+      );
+
+      const signer = provider.getSigner();
+      const signerAddress = await signer.getAddress();
+
+      await _deployedContract(
+        signer,
+        account,
+        name,
+        symbol,
+        supply,
+        imageURL
+      );
+    } catch (error) {
+      console.error("Token Creation Error:", error);
+      setLoader(false);
+      notifyError("Something went wrong");
+    }
+  };
+
   const _deployedContract = async (
     signer,
     account,
@@ -145,11 +185,12 @@ export const StateContextProvider = ({ children }) => {
     try {
       // Create a new ContractFactory instance with ABI, Bytecode, and Signe
       const factory = new ethers.ContractFactory(
-        ERC20Generator_ABI, // ABI defines the contract's functions and events
-        ERC20Generator_BYTECODE, // Bytecode is the compiled contract code
+        ERC20Generator_ABI,
+        ERC20Generator_BYTECODE,
         signer
       );
 
+      // Convert and validate supply
       const totalSupply = Number(supply);
 
       const _initialSupply = ethers.utils.parseEther(
@@ -157,15 +198,19 @@ export const StateContextProvider = ({ children }) => {
         "ether"
       );
 
+      // Deployment
+
       let contract = await factory.deploy(
         _initialSupply,
         name,
         symbol
       );
 
-      const transaction = await contract.deployed();
+      // Wait for deployment to complete
+      const deployedContract = await contract.deployed();
 
-      if (contract.address) {
+      // Rest of the existing local storage logic...
+      if (deployedContract.address) {
         const today = Date.now();
         let date = new Date(today);
         const _tokenCreatedDate =
@@ -176,79 +221,40 @@ export const StateContextProvider = ({ children }) => {
           supply: supply.toString(),
           name: name,
           symbol: symbol,
-          tokenAddress: contract.address,
-          transactionHash: contract.deployTransaction.hash,
+          tokenAddress: deployedContract.address,
+          transactionHash:
+            deployedContract.deployTransaction.hash,
           createdAt: _tokenCreatedDate,
           logo: imageURL,
         };
 
         let tokenHistoy = [];
-
         const history =
           localStorage.getItem("TOKEN_HISTORY");
 
         if (history) {
-          tokenHistoy = JSON.parse(
-            localStorage.getItem("TOKEN_HISTORY")
-          );
+          tokenHistoy = JSON.parse(history);
           tokenHistoy.push(_token);
-
           localStorage.setItem(
             "TOKEN_HISTORY",
-            tokenHistoy
+            JSON.stringify(tokenHistoy)
           );
-
-          setLoader(false);
-          setReCall(reCall + 1);
-          setOpenTokenCreator(false);
         } else {
           tokenHistoy.push(_token);
           localStorage.setItem(
             "TOKEN_HISTORY",
-            tokenHistoy
+            JSON.stringify(tokenHistoy)
           );
-
-          setLoader(false);
-          setReCall(reCall + 1);
-          setOpenTokenCreator(false);
         }
+
+        setLoader(false);
+        setReCall(reCall + 1);
+        setOpenTokenCreator(false);
       }
     } catch (error) {
+      console.error("Deployment Error Details:", error);
       setLoader(false);
-      notifyError("Something went wrong");
-      console.log(error);
-    }
-  };
-
-  const createERC20 = async (token, account, imageURL) => {
-    const { name, symbol, supply } = token;
-
-    try {
-      setLoader(true);
-      notifySuccess("creating token...");
-      if (!name || !symbol || !supply) {
-        notifyError("Data Missing");
-      } else {
-        const web3Modal = new Web3Modal();
-        const connection = await web3Modal.connect(); // Connect to the wallet
-        const provider = new ethers.providers.Web3Provider(
-          connection
-        ); // Get the Web3 provider
-        const signer = provider.getSigner();
-
-        _deployedContract(
-          signer,
-          account,
-          name,
-          symbol,
-          supply,
-          imageURL
-        );
-      }
-    } catch (error) {
-      setLoader(false);
-      notifyError("Something went wrong");
-      console.log(error);
+      notifyError("Contract deployment failed");
     }
   };
 
