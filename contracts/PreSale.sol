@@ -73,6 +73,8 @@ contract ICOMarketplace {
         symbol: tokenSymbol
         });
 
+        allSupportedTokens.push(_token);
+
         emit TokenAdded(_token, _price, msg.sender, tokenName, tokenSymbol);
   }
 

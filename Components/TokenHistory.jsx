@@ -11,7 +11,7 @@ const TokenHistory = ({
     toast.error(msg, { duration: 2000 });
 
   const copyAddress = (text) => {
-    navigator.clipboard.copyAddress(text);
+    navigator.clipboard.writeText(text);
     notifySuccess("Copied successfully");
   };
 

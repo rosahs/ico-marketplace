@@ -270,10 +270,10 @@ export const StateContextProvider = ({ children }) => {
       const contract = await ICO_MARKETPLACE_contract();
       const payAmount = ethers.utils.parseUnits(
         price.toString(),
-        "ethers"
+        "ether"
       );
 
-      const transaction = await contract.createICOSALE(
+      const transaction = await contract.createICOSale(
         address,
         payAmount,
         {
@@ -592,6 +592,7 @@ export const StateContextProvider = ({ children }) => {
         PINATA_API_KEY,
         PINATA_SECRET_KEY,
         shortenAddress,
+        reCall,
       }}
     >
       {children}

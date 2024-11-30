@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useStateContext } from "../Context/index";
 import Header from "../Components/Header";
@@ -49,6 +49,7 @@ const index = () => {
     PINATA_API_KEY,
     PINATA_SECRET_KEY,
     shortenAddress,
+    reCall,
   } = useStateContext();
 
   const notifySuccess = (msg) =>
@@ -74,6 +75,20 @@ const index = () => {
     notifySuccess("copied succefully");
   };
 
+  useEffect(() => {
+    if (address) {
+      GET_ALL_ICOSALE_TOKEN().then((token) => {
+        console.log("all", token);
+        setAllICOs(token);
+      });
+
+      GET_ALL_USER_ICOSALE_TOKEN().then((token) => {
+        console.log("user", token);
+        setAllUserICOs(token);
+      });
+    }
+  }, [address, reCall]);
+
   return (
     <div>
       <Header
@@ -93,7 +108,14 @@ const index = () => {
         openICOMarketPlace={openICOMarketPlace}
       />
 
-      {OpenAllICOs && <ICOMarket />}
+      {OpenAllICOs && (
+        <ICOMarket
+          array={allUserICOs}
+          shortenAddress={shortenAddress}
+          handleClick={setOpenAllICOs}
+          currency={currency}
+        />
+      )}
 
       {openTokenCreator && (
         <TokenCreator
@@ -115,9 +137,24 @@ const index = () => {
         />
       )}
 
-      {openCreateICO && <CreateICO />}
+      {openCreateICO && (
+        <CreateICO
+          shortenAddress={shortenAddress}
+          setOpenCreateICO={setOpenCreateICO}
+          connectWallet={connectWallet}
+          address={address}
+          createICOSALE={createICOSALE}
+        />
+      )}
 
-      {openICOMarketPlace && <ICOMarket />}
+      {openICOMarketPlace && (
+        <ICOMarket
+          array={allICOs}
+          shortenAddress={shortenAddress}
+          handleClick={setOpenICOMarketPlace}
+          currency={currency}
+        />
+      )}
 
       {openBuyToken && <BuyToken />}
       {openTransferToken && <TokenTransfer />}
