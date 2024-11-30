@@ -115,7 +115,7 @@ contract ICOMarketplace {
     
       IERC20 token = IERC20(_token);
       uint256 balance = token.balanceOf(address(this));
-      require(balance >= 0, 'Balance must be greatet than 0');
+      require(balance > 0, 'Balance must be greatet than 0');
       require(token.transfer(msg.sender, _amount), "Transfer failed");
 
         emit TokenWithdraw(_token, msg.sender, _amount);

@@ -18,6 +18,7 @@ import Card from "../Components/Card";
 import BuyToken from "../Components/BuyToken";
 import WithdrawToken from "../Components/WithdrawToken";
 import TokenTransfer from "../Components/TokenTransfer";
+import toast from "react-hot-toast";
 
 const index = () => {
   const {
@@ -57,7 +58,7 @@ const index = () => {
   const notifyError = (msg) =>
     toast.error(msg, { duration: 200 });
 
-  const [allICOs, setAllICOs] = useState();
+  const [allICOs, setAllICOs] = useState([]);
   const [allUserICOs, setAllUserICOs] = useState();
 
   //component open
@@ -108,6 +109,33 @@ const index = () => {
         openICOMarketPlace={openICOMarketPlace}
       />
 
+      <div className="create">
+        <h1 style={{ fontSize: "2rem" }}>
+          All ICOs Marketplace
+        </h1>
+
+        {allICOs.length !== 0 && (
+          <Marketplace
+            array={allICOs}
+            shortenAddress={shortenAddress}
+            setBuyICO={setBuyICO}
+            setOpenBuyToken={setOpenBuyToken}
+            currency={currency}
+          />
+        )}
+
+        <Card
+          setOpenAllICOs={setOpenAllICOs}
+          setOpenTokenCreator={setOpenTokenCreator}
+          setOpenTransferToken={setOpenTransferToken}
+          setOpenTokenHistory={setOpenTokenHistory}
+          setOpenWithdrawToken={setOpenWithdrawToken}
+          setOpenICOMarketPlace={setOpenICOMarketPlace}
+          copyAddress={copyAddress}
+          setOpenCreateICO={setOpenCreateICO}
+        />
+      </div>
+
       {OpenAllICOs && (
         <ICOMarket
           array={allUserICOs}
@@ -156,9 +184,32 @@ const index = () => {
         />
       )}
 
-      {openBuyToken && <BuyToken />}
-      {openTransferToken && <TokenTransfer />}
-      {openWithdrawToken && <WithdrawToken />}
+      {openBuyToken && (
+        <BuyToken
+          address={address}
+          buyToken={buyToken}
+          connectWallet={connectWallet}
+          setOpenBuyToken={setOpenBuyToken}
+          buyICO={buyICO}
+          currency={currency}
+        />
+      )}
+      {openTransferToken && (
+        <TokenTransfer
+          address={address}
+          transferTokens={transferTokens}
+          connectWallet={connectWallet}
+          setOpenTransferToken={setOpenTransferToken}
+        />
+      )}
+      {openWithdrawToken && (
+        <WithdrawToken
+          address={address}
+          withdrawToken={withdrawToken}
+          connectWallet={connectWallet}
+          setOpenWithdrawToken={setOpenWithdrawToken}
+        />
+      )}
 
       <Footer />
 

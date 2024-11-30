@@ -553,11 +553,25 @@ export const StateContextProvider = ({ children }) => {
       notifySuccess(
         "Token transfer completed successfully"
       );
+
+      console.log("Transaction Details:", {
+        token: withdrawQuantity.token,
+        amount: payAmount.toString(),
+      });
     } catch (error) {
       setLoader(false);
       setOpenWithdrawToken(false);
       notifyError("Token transfer failed");
-      console.log(error);
+      // More specific error handling
+      if (error.reason) {
+        notifyError(error.reason);
+      } else if (error.message) {
+        notifyError(error.message);
+      } else {
+        notifyError("Token withdrawal failed");
+      }
+
+      console.log("Withdrawal Error:", error);
     }
   };
 
